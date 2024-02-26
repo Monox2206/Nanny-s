@@ -1,59 +1,53 @@
 from django.db import models
 
 # Create your models here.
-class Categoria(models.Model):
-	nombre = models.CharField(max_length=50)
-	descripcion = models.TextField(null=True, blank=True)
 
-	def __str__(self):
-		return f"{self.id} ----- {self.nombre}"
+class Servicio(models.Model):
 
-class Producto(models.Model):
-	nombre = models.CharField(max_length=254)
-	precio = models.IntegerField()
-	fecha_compra = models.DateField()
-	categoria = models.ForeignKey(Categoria, on_delete=models.DO_NOTHING)
-	stock = models.IntegerField(default=1)
-	foto = models.ImageField(null=True, blank=True, default='fotos_productos/default.png', upload_to='fotos_productos')
-
-	def __str__(self):
-		return f"{self.id} ----- {self.nombre} ${self.precio}"
-
+    nombre = models.CharField(max_length=30)
+    precio = models.FloatField()
+    descripcion = models.CharField(max_length=200)
 
 class Usuario(models.Model):
-	ROLES = (
-		(1, 'Administrador'),
-		(2, 'WebMaster'),
-		(3, 'Usuario'),
+    ROLES = (
+		(1, 'Usuario'),
+		(2, 'Ninos/Abuelos'),
+		(3, 'Padres'),
+        (4, 'Administrador')
 	)
-	foto = models.ImageField(null=True, blank=True, default='fotos/default.png', upload_to='fotos')
-	nombre = models.CharField(max_length=50)
-	apellido = models.CharField(max_length=50)
-	nick = models.CharField(max_length=50)
-	passwd = models.CharField(max_length=254)
-	rol = models.IntegerField(choices=ROLES, default=3)
+    nombre = models.CharField(max_length=30)
+    apellido = models.CharField(max_length=30)
+    nick = models.CharField(max_length=50)
+    foto = models.ImageField(null=True, blank=True, upload_to='fotos')
+    correo= models.CharField(max_length=30)
+    password= models.CharField(max_length=15)
+    rol = models.IntegerField(choices=ROLES, default=1)
+    descripcion = models.CharField(max_length=200)
 
-	def __str__(self):
-		return f"{self.nick}"
+    def __str__(self):
+	    return f"{self.nick}"
+    
+class Padre(models.Model):
 
-class Venta(models.Model):
-	fecha_venta = models.DateTimeField(auto_now=True)
-	usuario = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING)
-	ESTADOS = (
-		(1, 'Pendiente'),
-		(2, 'Enviado'),
-		(3, 'Rechazada'),
-	)
-	estado = models.IntegerField(choices=ESTADOS, default=1)
+    nombre = models.CharField(max_length=30)
+    fecha_nacimiento = models.DateField(max_length=30)
+    email= models.CharField(max_length=15)
+    telefono= models.CharField(max_length=15)
+    direccion= models.CharField(max_length=15)
+    descripcion = models.CharField(max_length=200)
 
-	def __str__(self):
-		return f"{self.id} - {self.usuario}"
+class Ninoabuelo(models.Model):
 
-class DetalleVenta(models.Model):
-	venta = models.ForeignKey(Venta, on_delete=models.DO_NOTHING)
-	producto = models.ForeignKey(Producto, on_delete=models.DO_NOTHING)
-	cantidad = models.IntegerField()
-	precio_historico = models.IntegerField()
+    nombre = models.CharField(max_length=30)
+    fecha_nacimiento = models.DateField(max_length=30)
+    numero_identificacion = models.CharField(max_length=30)
+    descripcion = models.CharField(max_length=200)
 
-	def __str__(self):
-		return f"{self.id} - {self.venta}"
+class Pago(models.Model):
+
+    monto = models.FloatField(max_length=30)
+    fecha_pago = models.DateField(max_length=30)
+    metodo_pago = models.CharField(max_length=30)
+    descripcion = models.CharField(max_length=200)
+
+
