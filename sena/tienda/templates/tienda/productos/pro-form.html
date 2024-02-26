@@ -1,0 +1,44 @@
+{% extends 'tienda/base.html' %}
+
+{% load static %}
+
+{% block titul %} Crear Producto {% endblock %}
+
+{% block contenedor %}
+
+    {% if id %}
+        <h3>Editar: {{ id }}</h3>
+    {% endif %}
+
+    <form method="post" action="{% url 'tienda:productos_guardar' %}">
+        {% csrf_token %}
+
+        <input type="hidden" name="id" value="{{ data.id }}">
+
+        <label class="form-control">Nombre:</label>
+        <input type="text" name="nombre" class="form-control" value="{{ data.nombre }}"/>
+        <br>
+        <label class="form-control">Precio:</label>
+        <input type="number" name="precio" class="form-control" value="{{ data.precio }}"/>
+        <br>
+        <label class="form-control">Fecha Compra:</label>
+        <input type="date" name="fecha_compra" class="form-control" value="{{ data.fecha_compra|date:'Y-m-d' }}"/>
+        <br>
+        <label class="form-control">Categoría:</label>
+        <select name="categoria" class="form-control">
+            <option value="">Seleccione</option>
+            {% for c in categorias %}
+                <option value="{{ c.id }}" {% if data.categoria.id == c.id %}selected=""{% endif %} >{{ c.nombre }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <button type="submit" class="btn btn-info">
+        {% if id %}
+            Actualizar
+        {% else %}
+            Crear
+        {% endif %}
+        </button>
+    </form>
+
+{% endblock %}

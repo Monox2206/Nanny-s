@@ -1,0 +1,26 @@
+{% extends 'tienda/base.html' %}
+
+{% load static %}
+
+{% block titul %} Perfil {% endblock %}
+
+{% block contenedor %}
+
+    <div class="card mb-3  mx-auto mt-3" style="max-width: 540px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{{ request.session.logueo.foto }}" class="img-fluid rounded-start" alt="...">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title">{{ request.session.logueo.nombre_rol }}</h5>
+                    <p class="card-text">
+                        {{ request.session.logueo.nombre }}<br>
+                    </p>
+                    <p class="card-text"><small class="text-body-secondary">Nombre de usuario: {{ data.nick }}</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

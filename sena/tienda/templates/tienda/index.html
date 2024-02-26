@@ -1,0 +1,74 @@
+{% extends 'tienda/base.html' %}
+
+{% load static %}
+
+{% block titul %} Inicio {% endblock %}
+
+{% block contenedor %}
+
+    <h1>Tienda SENA</h1>
+    <div class="container text-center mb-5">
+        <div class="row align-items-start">
+            <div class="col col-3">
+                <div class="list-group">
+                    <a href="{% url 'tienda:index' 'no' %}?id=0" class="list-group-item list-group-item-action list-group-item-warning {% if request.session.submenu == 0 %}active{% endif %}" aria-current="true">
+                        Todos
+                    </a>
+                    {% for c in categorias %}
+                        <a href="{% url 'tienda:index' 'no' %}?id={{ c.id }}" class="list-group-item list-group-item-action list-group-item-warning {% if request.session.submenu == c.id %}active{% endif %}">{{ c.nombre }}</a>
+                    {% endfor %}
+
+                </div>
+            </div>
+            <div class="col col-9">
+                <div class="card">
+                    <h5 class="card-header">Productos</h5>
+                    <div class="card-body">
+                        {% for p in productos %}
+                            {% if forloop.first %}
+                                <div class="row">
+                            {% endif %}
+
+                                <div class="card m-2" style="width: 18rem; float:left;">
+                                    <img src="{{ p.foto.url }}" class="card-img-top" alt="...">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ p.nombre }} (${{ p.precio }})</h5>
+                                        <p class="card-text text-sm text-muted">
+                                            <figcaption class="blockquote-footer mt-1">
+                                                <cite>Categoría: {{ p.categoria.nombre }}</cite>
+                                            </figcaption>
+                                        </p>
+                                        {% if p.stock <= 0 %}
+                                            <strong class="text-danger">Agotado!!</strong>
+                                        {% else %}
+                                            <form action="{% url 'tienda:carrito_agregar' %}" method="post">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="id" value="{{ p.id }}">
+                                                <input type="number" min="1" max="{{ p.stock }}" value="1" size="3" name="cantidad">
+                                                <button type="submit" class="btn btn-primary">Add Carrito</button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                            {% if forloop.counter|divisibleby:3 %}
+                                </div>
+                                <div class="row">
+                            {% endif %}
+
+                            {% if forloop.last %}
+                                </div>
+                            {% endif %}
+
+
+                        {% endfor %}
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

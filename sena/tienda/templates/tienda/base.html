@@ -1,0 +1,141 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Tienda SENA - {% block titul %}...{% endblock %}</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'tienda/favicon_io/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'tienda/favicon_io/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'tienda/favicon_io/favicon-16x16.png' %}">
+    <!--<link rel="manifest" href="{% static 'tienda/favicon_io/site.webmanifest' %}">-->
+
+    <link rel="stylesheet" href="{% static 'tienda/css/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'tienda/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'tienda/icons-main/font/bootstrap-icons.min.css' %}" />
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg" style="background-color: orange;padding-right:0.5rem;">
+        <span class="container-fluid">
+            <a class="navbar-brand" href="{% url 'tienda:index' 'no' %}">Tienda</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <span class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{% url 'tienda:index' 'no' %}">Inicio</a>
+                    </li>
+                    {% if request.session.logueo.nombre_rol != "Usuario" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tienda:listar_categorias' %}">Categorias</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Productos
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'tienda:productos' %}">Listar</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Vender</a></li>
+                            <li><a class="dropdown-item" href="#">Revisar inventario</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Pricing</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'tienda:listar_categorias' %}" class="nav-link {% if request.session.logueo.nombre_rol == 'Usuario' %}disabled{% endif %}" aria-disabled="true">Categorias(Copia)</a>
+                    </li>
+                </ul>
+                <div class="navbar-text">
+                    {% if request.session.logueo %}
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                Bienvenido {{ request.session.logueo.nombre }} ({{ request.session.logueo.nombre_rol }})<!--<img src="{{ request.session.logueo.foto }}">-->
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'tienda:perfil' %}">Perfil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'tienda:cambiar_clave' ' ' %}">Cambiar Contraseña</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+
+                                <li><a class="dropdown-item" href="{% url 'tienda:logout' %}">Cerrar sesión</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link position-relative" href="javascript:ver_carrito(`{% url 'tienda:carrito_listar' %}`);">
+                                  <i class="bi bi-cart"></i>
+                                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ request.session.cantidad_productos|default:0 }}
+                                    <span class="visually-hidden">productos</span>
+                                  </span>
+                            </a>
+                        </li>
+                    </ul>
+                    {% endif %}
+                </div>
+
+            </span>
+        </span>
+    </nav>
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" role="alert">
+            <div>{{ message }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasRightLabel">Carrito de Compra ({{ request.session.cantidad_productos|default:0 }})</h5>
+            <span id="loading_cc" class="d-none">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </span>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body" id="respuesta_carrito">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    {% block contenedor %}
+        ...
+    {% endblock %}
+
+
+
+
+
+    <footer class="fixed-bottom">
+        <div class="card card-body">Copyright - Colombia 2023</div>
+    </footer>
+
+    <!-- JS include here -->
+    <script src="{% static 'tienda/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'tienda/js/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'tienda/js/library.js' %}"></script>
+
+    <!-- fin - JS include -->
+</body>
+</html>

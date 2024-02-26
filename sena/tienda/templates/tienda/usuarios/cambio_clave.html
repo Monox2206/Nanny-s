@@ -1,0 +1,20 @@
+{% extends 'tienda/base.html' %}
+
+{% load static %}
+
+{% block titul %} Inicio {% endblock %}
+
+{% block contenedor %}
+
+    <form action="{% url 'tienda:guarda_clave' %}" method="post">
+        {% csrf_token %}
+        <label>Contraseña actual:</label>
+        <input type="password" name="actual" class="form-control" value="{% if actual != ' ' %}{{ actual }}{% endif %}" /><br><br>
+        <label>Nueva Contraseña:</label>
+        <input type="password" name="clave1" class="form-control" /><br>
+        <label>Confirmar Contraseña nueva:</label>
+        <input type="password" name="clave2" class="form-control" /><br>
+        <button type="submit" class="btn btn-success">Enviar</button>
+    </form>
+
+{% endblock %}

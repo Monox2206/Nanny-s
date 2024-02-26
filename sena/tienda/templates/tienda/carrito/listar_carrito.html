@@ -1,0 +1,37 @@
+{% load humanize %}
+{% if datos %}
+    <table class="table">
+        <tr class="text-center">
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+            <th>Acciones</th>
+        </tr>
+        {% for p in datos %}
+        <tr class="text-center">
+            <td>
+                <img src="{{ p.foto }}" width="40%"><br>
+                <strong class="text-success">{{ p.nombre }}</strong><br>Precio: $({{ p.precio }})
+            </td>
+            <td>
+                <input type="hidden" name="id" value="{{ p.id }}">
+                <input type="hidden" name="precios" value="{{ p.precio }}" style="width:100px;">
+
+                <input type="number" min="1" max="{{ p.stock }}" value="{{ p.cantidad }}" size="3" name="cantidades" style="width:50px;" onchange="actualizar_totales({{ p.id }}, this.value, {{ p.precio }});actualizar_carrito(`{% url 'tienda:carrito_actualizar' %}`, {{ p.id }}, this.value);"  onkeyup="actualizar_totales({{ p.id }}, this.value, {{ p.precio }});actualizar_carrito(`{% url 'tienda:carrito_actualizar' %}`, {{ p.id }}, this.value);">
+            </td>
+            <td id="subtotal_{{ p.id }}">${{ p.subtotal|intcomma }}</td>
+            <td>
+                <a href="{% url 'tienda:carrito_eliminar_producto' p.id %}" class="btn btn-danger">x</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2 class="text-end">Total: $<span id="total_carrito">{{ total|intcomma }}</span></h2>
+    <br>
+    <a href="{% url 'tienda:establecer_venta' %}" class="btn btn-info">Pagar</a>
+    <a href="{% url 'tienda:carrito_eliminar_producto' 0 %}" class="btn btn-warning">Limpiar Carrito</a>
+
+{% else %}
+    <p>Carrito Vacío</p>
+{% endif %}
